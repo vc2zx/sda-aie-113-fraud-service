@@ -8,6 +8,8 @@ dependencies = [
     "scikit-learn",
     "joblib",
     "pydantic>=2",
+    "fastapi[standard]",
+    "uvicorn",
 ]
 
 [build-system]
@@ -20,4 +22,5 @@ packages = ["src/fraud_service"]
 [project.optional-dependencies]
 dev = [
     "ruff",
+    "httpx",
 ]

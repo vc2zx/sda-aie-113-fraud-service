@@ -3,6 +3,7 @@ from datetime import datetime
 from math import log1p
 from typing import Literal, TypedDict
 
+Channel = Literal["ecom", "pos", "atm"]
 Decision = Literal["allow", "review", "block"]
 
 
@@ -18,10 +19,10 @@ class FraudFeatures(TypedDict):
 class Transaction:
     transaction_id: str
     amount_sar: float
-    channel: str
     merchant_category: str
     customer_id: str
     timestamp: datetime
+    channel: Channel
 
     def to_features(self) -> FraudFeatures:
         hour = self.timestamp.hour
