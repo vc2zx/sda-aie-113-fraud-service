@@ -1,4 +1,4 @@
-﻿name: CI
+name: CI
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
       - run: python -m pip install -e ".[dev]"
 
       - run: >
-          pytest
+          python -m pytest
           --cov=fraud_service.domain
           --cov=fraud_service.service
           --cov=fraud_service.api
