@@ -1,7 +1,10 @@
+import structlog
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
 from fraud_service.api.schemas import PredictRequest, PredictResponse
+
+log = structlog.get_logger()
 
 router = APIRouter(prefix="/v1")
 
@@ -41,6 +44,18 @@ def predict(
 
     transaction = payload.to_domain()
     result = request.app.state.scorer.score(transaction)
+
+    log.info(
+        "prediction_served",
+        decision=result.decision,
+        probability_bucket=round(result.probability, 1),
+        model_version=result.model_version,
+        git_sha=getattr(
+            getattr(request.app.state, "settings", None),
+            "git_sha",
+            "dev",
+        ),
+    )
 
     return PredictResponse(
         transaction_id=result.transaction_id,
