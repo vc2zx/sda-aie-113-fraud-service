@@ -1092,9 +1092,7 @@ This project was developed as the golden-thread engineering project for:
 
 Program provider:
 
-### [SDAIA Academy](https://sdaia.gov.sa/en/Sectors/academy/Pages/default.aspx)
-
-Saudi Data & AI Authority — SDAIA.
+### https://github.com/SDAIAAcademy
 
 The project demonstrates the software-engineering practices required to move an AI model from an experimental notebook workflow toward a production-oriented service.
 
