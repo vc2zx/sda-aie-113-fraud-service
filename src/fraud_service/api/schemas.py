@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -70,3 +71,31 @@ class ErrorDetail(BaseModel):
 
 class ErrorResponse(BaseModel):
     error: ErrorDetail
+
+
+class BatchPredictRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    transactions: list[dict[str, Any]] = Field(
+        min_length=1,
+        max_length=256,
+    )
+
+
+class BatchItemError(BaseModel):
+    code: str
+    message: str
+
+
+class BatchItemResult(BaseModel):
+    index: int
+    success: bool
+    prediction: PredictResponse | None = None
+    error: BatchItemError | None = None
+
+
+class BatchPredictResponse(BaseModel):
+    results: list[BatchItemResult]
+    succeeded: int
+    failed: int
+    trace_id: str
