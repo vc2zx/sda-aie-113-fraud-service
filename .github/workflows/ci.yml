@@ -43,6 +43,18 @@ jobs:
           --cov-fail-under=80
           -q
 
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   image-smoke:
     runs-on: ubuntu-latest
     steps:
@@ -76,7 +88,7 @@ jobs:
 
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [lint, test, image-smoke]
+    needs: [lint, test, gitleaks, image-smoke]
     runs-on: ubuntu-latest
 
     steps:
@@ -91,8 +103,14 @@ jobs:
       - uses: docker/setup-buildx-action@v3
 
       - name: Build and publish immutable image
+        id: publish-image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: ghcr.io/vc2zx/sda-aie-113-fraud-service:${{ github.sha }}
+
+      - name: Report immutable image
+        run: |
+          echo "Tag: ghcr.io/vc2zx/sda-aie-113-fraud-service:${{ github.sha }}"
+          echo "Digest: ${{ steps.publish-image.outputs.digest }}"
